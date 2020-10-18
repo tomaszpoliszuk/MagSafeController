@@ -1,0 +1,10 @@
+{
+	entry = {
+		cell = "PSLinkCell";
+		isController = "1";
+		label = "MagSafe Controller";
+		bundle = "MagSafeControllerSettings";
+		detail = "MagSafeControllerSettings";
+		icon = "icons/MagSafeController.png";
+	};
+}

@@ -1,0 +1,195 @@
+{
+	title = "MagSafe Controller";
+	items = (
+		{
+			cell = PSSwitchCell;
+			key = enableTweak;
+			label = "Enable Tweak";
+			default = 1;
+			defaults = com.tomaszpoliszuk.magsafecontroller;
+			PostNotification = "com.tomaszpoliszuk.magsafecontroller.settingschanged";
+			icon = "icons/MagSafeController.png";
+			height = 55;
+		},
+		{
+			cell = PSGroupCell;
+			label = "Select Mode:";
+			key = selectMode;
+		},
+		{
+			cell = PSSegmentCell;
+			key = useNative;
+			default = 1;
+			defaults = com.tomaszpoliszuk.magsafecontroller;
+			PostNotification = "com.tomaszpoliszuk.magsafecontroller.settingschanged";
+			validValues = (
+				0,
+				1
+			);
+			validTitles = (
+				Custom,
+				Native
+			);
+			height = 55;
+		},
+		{
+			cell = PSGroupCell;
+			label = "Select size:";
+		},
+		{
+			cell = PSEditTextCell;
+			key = boltScale;
+			label = "Scale of Bolt Image";
+			default = 100;
+			defaults = com.tomaszpoliszuk.magsafecontroller;
+			PostNotification = "com.tomaszpoliszuk.magsafecontroller.settingschanged";
+			noAutoCorrect = 0;
+			keyboard = numbers;
+			isNumeric = 1;
+			placeholder = "100%";
+		},
+		{
+			cell = PSEditTextCell;
+			key = ringScale;
+			label = "Scale of Ring";
+			default = 100;
+			defaults = com.tomaszpoliszuk.magsafecontroller;
+			PostNotification = "com.tomaszpoliszuk.magsafecontroller.settingschanged";
+			noAutoCorrect = 0;
+			keyboard = numbers;
+			isNumeric = 1;
+			placeholder = "100%";
+		},
+		{
+			cell = PSEditTextCell;
+			key = lineWidth;
+			label = "Line thickness";
+			default = 24;
+			defaults = com.tomaszpoliszuk.magsafecontroller;
+			PostNotification = "com.tomaszpoliszuk.magsafecontroller.settingschanged";
+			noAutoCorrect = 0;
+			keyboard = numbers;
+			isNumeric = 1;
+			placeholder = "24";
+		},
+		{
+			cell = PSEditTextCell;
+			key = labelFontSize;
+			label = "Font Size of Text Label";
+			default = 24;
+			defaults = com.tomaszpoliszuk.magsafecontroller;
+			PostNotification = "com.tomaszpoliszuk.magsafecontroller.settingschanged";
+			noAutoCorrect = 0;
+			keyboard = numbers;
+			isNumeric = 1;
+			placeholder = "24";
+		},
+		{
+			cell = PSGroupCell;
+			label = "Select Colors:";
+			footerText = "Ability to select colors works currently only in custom mode";
+		},
+		{
+			cell = PSStaticTextCell;
+			label = Color;
+		},
+		{
+			cell = PSSegmentCell;
+			key = selectedColor;
+			default = 0;
+			defaults = com.tomaszpoliszuk.magsafecontroller;
+			PostNotification = "com.tomaszpoliszuk.magsafecontroller.settingschanged";
+			validValues = (
+				0,
+				1,
+				2
+			);
+			validTitles = (
+				Green,
+				Yellow,
+				Red
+			);
+			height = 55;
+		},
+		{
+			cell = PSStaticTextCell;
+			label = "Color in Low Power Mode";
+		},
+		{
+			cell = PSSegmentCell;
+			key = selectedLowPowerModeColor;
+			default = 1;
+			defaults = com.tomaszpoliszuk.magsafecontroller;
+			PostNotification = "com.tomaszpoliszuk.magsafecontroller.settingschanged";
+			validValues = (
+				0,
+				1,
+				2
+			);
+			validTitles = (
+				Green,
+				Yellow,
+				Red
+			);
+			height = 55;
+		},
+		{
+			cell = PSStaticTextCell;
+			label = "Color of blur in background";
+		},
+		{
+			cell = PSSegmentCell;
+			key = blurBackground;
+			default = 2;
+			defaults = com.tomaszpoliszuk.magsafecontroller;
+			PostNotification = "com.tomaszpoliszuk.magsafecontroller.settingschanged";
+			validValues = (
+				1,
+				2
+			);
+			validTitles = (
+				Light,
+				Dark
+			);
+			height = 55;
+		},
+		{
+			cell = PSGroupCell;
+			label = " ";
+		},
+		{
+			cell = PSButtonCell;
+			label = "Reset Settings";
+			action = resetSettings;
+			alignment = center;
+		},
+		{
+			cell = PSGroupCell;
+			label = "Related Links";
+		},
+		{
+			cell = PSButtonCell;
+			label = "Source Code";
+			action = sourceCode;
+			icon = "icons/code.png";
+		},
+		{
+			cell = PSButtonCell;
+			label = "Known Issues";
+			action = knownIssues;
+			icon = "icons/bug.png";
+		},
+		{
+			cell = PSButtonCell;
+			label = "Tomasz Poliszuk @ Github";
+			action = TomaszPoliszukAtGithub;
+			icon = "icons/github.png";
+		},
+		{
+			cell = PSButtonCell;
+			label = "Tomasz Poliszuk @ Twitter";
+			action = TomaszPoliszukAtTwitter;
+			icon = "icons/twitter.png";
+		}
+	);
+}
