@@ -12,6 +12,7 @@ iOS 13 and above
 
 ## Screenshots:
 [animation preview](https://gfycat.com/athleticformalboilweevil.gif)
+
 ![settings](screenshots/magsafecontroller1.png)
 ![magsafe](screenshots/magsafecontroller2.png)
 ![magsafe](screenshots/magsafecontroller3.jpg)
