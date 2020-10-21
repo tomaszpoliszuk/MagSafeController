@@ -11,7 +11,7 @@ iOS 13 and above
 **Configure options from Settings.**
 
 ## Screenshots:
-![animation preview](https://gfycat.com/athleticformalboilweevil.gif)
+[animation preview](https://gfycat.com/athleticformalboilweevil.gif)
 ![settings](screenshots/magsafecontroller1.png)
 ![magsafe](screenshots/magsafecontroller2.png)
 ![magsafe](screenshots/magsafecontroller3.jpg)
