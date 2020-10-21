@@ -1,6 +1,25 @@
 #import <Preferences/PSListController.h>
 #import <Preferences/PSSpecifier.h>
-#include <spawn.h>
+
+//typedef enum {
+//	None					= 0,
+//	RestartRenderServer		= (1 << 0), // 1 in decimal, also relaunch backboardd
+//	SnapshotTransition		= (1 << 1), // 2 in decimal
+//	FadeToBlackTransition	= (1 << 2), // 4 in decimal
+//} SBSRelaunchActionStyle;
+
+NSString *const domainString = @"com.tomaszpoliszuk.magsafecontroller";
+
+@interface BSAction : NSObject
+@end
+@interface SBSRelaunchAction : BSAction
++ (id)actionWithReason:(id)arg1 options:(unsigned long long)arg2 targetURL:(id)arg3;
+@end
+
+@interface FBSSystemService : NSObject
++ (id)sharedService;
+- (void)sendActions:(id)arg1 withResult:(id /* block */)arg2;
+@end
 
 @interface PSListController (MagSafeController)
 @end
@@ -9,15 +28,11 @@
 }
 @end
 
-static bool supportedNative = [[NSProcessInfo processInfo] isOperatingSystemAtLeastVersion:(NSOperatingSystemVersion){14, 1, 0}];
-
-NSString *domainString = @"com.tomaszpoliszuk.magsafecontroller";
-
 @implementation MagSafeControllerSettings
 - (NSArray *)specifiers {
 	if (!_specifiers) {
 		_specifiers = [self loadSpecifiersFromPlistName:@"Root" target:self];
-		if (supportedNative) {
+		if (@available(iOS 14.1, *)) {
 			removeSpecifiers = [[NSMutableArray alloc]init];
 			for(PSSpecifier* specifier in _specifiers) {
 				NSString* key = [specifier propertyForKey:@"key"];
@@ -67,9 +82,10 @@ NSString *domainString = @"com.tomaszpoliszuk.magsafecontroller";
 -(void)respringDevice {
 	UIAlertController *confirmRespringAlert = [UIAlertController alertControllerWithTitle:@"Respring Device" message:@"Do you want to respring device?" preferredStyle:UIAlertControllerStyleAlert];
 	UIAlertAction *confirm = [UIAlertAction actionWithTitle:@"Confirm" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-		pid_t pid;
-		const char *argv[] = {"sbreload", NULL};
-		posix_spawn(&pid, "/usr/bin/sbreload", NULL, NULL, (char* const*)argv, NULL);
+		SBSRelaunchAction *respringAction = [NSClassFromString(@"SBSRelaunchAction") actionWithReason:@"RestartRenderServer" options:4 targetURL:[NSURL URLWithString:@"prefs:root=MagSafe%20Controller"]];
+		FBSSystemService *frontBoardService = [NSClassFromString(@"FBSSystemService") sharedService];
+		NSSet *actions = [NSSet setWithObject:respringAction];
+		[frontBoardService sendActions:actions withResult:nil];
 	}];
 	UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:nil];
 	[confirmRespringAlert addAction:cancel];
@@ -99,6 +115,12 @@ NSString *domainString = @"com.tomaszpoliszuk.magsafecontroller";
 -(void)knownIssues {
 	NSURL *knownIssues = [NSURL URLWithString:@"https://github.com/tomaszpoliszuk/MagSafeController/issues"];
 	[[UIApplication sharedApplication] openURL:knownIssues options:@{} completionHandler:nil];
+}
+-(void)TomaszPoliszukAtBigBoss {
+	UIApplication *application = [UIApplication sharedApplication];
+	NSString *tweakName = @"MagSafe+Controller";
+	NSURL *twitterWebsite = [NSURL URLWithString:[@"http://apt.thebigboss.org/developer-packages.php?name=" stringByAppendingString:tweakName]];
+	[application openURL:twitterWebsite options:@{} completionHandler:nil];
 }
 -(void)TomaszPoliszukAtGithub {
 	UIApplication *application = [UIApplication sharedApplication];

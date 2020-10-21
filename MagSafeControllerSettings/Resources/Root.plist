@@ -4,7 +4,7 @@
 		{
 			cell = PSSwitchCell;
 			key = enableTweak;
-			label = "Enable Tweak";
+			label = ENABLE_TWEAK;
 			default = 1;
 			defaults = com.tomaszpoliszuk.magsafecontroller;
 			PostNotification = "com.tomaszpoliszuk.magsafecontroller.settingschanged";
@@ -71,6 +71,22 @@
 			keyboard = numbers;
 			isNumeric = 1;
 			placeholder = "24";
+		},
+		{
+			cell = PSSwitchCell;
+			key = useSplashEffect;
+			label = "Splash Effect";
+			default = 1;
+			defaults = com.tomaszpoliszuk.magsafecontroller;
+			PostNotification = "com.tomaszpoliszuk.magsafecontroller.settingschanged";
+		},
+		{
+			cell = PSSwitchCell;
+			key = useChargingRingBackground;
+			label = "Charging Ring Background";
+			default = 1;
+			defaults = com.tomaszpoliszuk.magsafecontroller;
+			PostNotification = "com.tomaszpoliszuk.magsafecontroller.settingschanged";
 		},
 		{
 			cell = PSEditTextCell;
@@ -159,37 +175,43 @@
 		},
 		{
 			cell = PSButtonCell;
-			label = "Reset Settings";
+			label = RESET_SETTINGS;
 			action = resetSettings;
 			alignment = center;
 		},
 		{
 			cell = PSGroupCell;
-			label = "Related Links";
+			label = RELATED_LINKS;
 		},
 		{
 			cell = PSButtonCell;
-			label = "Source Code";
+			label = SOURCE_CODE;
 			action = sourceCode;
 			icon = "icons/code.png";
 		},
 		{
 			cell = PSButtonCell;
-			label = "Known Issues";
+			label = KNOWN_ISSUES;
 			action = knownIssues;
 			icon = "icons/bug.png";
 		},
 		{
 			cell = PSButtonCell;
-			label = "Tomasz Poliszuk @ Github";
+			label = TOMASZ_POLISZUK_AT_BIGBOSS;
+			action = TomaszPoliszukAtBigBoss;
+			icon = "icons/packages.png";
+		},
+		{
+			cell = PSButtonCell;
+			label = TOMASZ_POLISZUK_AT_GITHUB;
 			action = TomaszPoliszukAtGithub;
 			icon = "icons/github.png";
 		},
 		{
 			cell = PSButtonCell;
-			label = "Tomasz Poliszuk @ Twitter";
+			label = TOMASZ_POLISZUK_AT_TWITTER;
 			action = TomaszPoliszukAtTwitter;
 			icon = "icons/twitter.png";
-		}
+		},
 	);
 }
