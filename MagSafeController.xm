@@ -21,7 +21,7 @@
 @property (nonatomic) double alignmentPercent;
 @end
 
-NSString *domainString = @"com.tomaszpoliszuk.magsafecontroller";
+NSString *const domainString = @"com.tomaszpoliszuk.magsafecontroller";
 NSUserDefaults *tweakSettings;
 
 static bool enableTweak;
@@ -57,7 +57,9 @@ void TweakSettingsChanged() {
 
 	enableTweak = [([tweakSettings objectForKey:@"enableTweak"] ?: @(YES)) boolValue];
 
-	useNative = [([tweakSettings objectForKey:@"useNative"] ?: @(YES)) boolValue];
+	if (@available(iOS 14.1, *)) {
+		useNative = [([tweakSettings objectForKey:@"useNative"] ?: @(YES)) boolValue];
+	}
 
 	selectedColor = [([tweakSettings valueForKey:@"selectedColor"] ?: @(0)) integerValue];
 	selectedLowPowerModeColor = [([tweakSettings valueForKey:@"selectedLowPowerModeColor"] ?: @(1)) integerValue];
@@ -328,9 +330,7 @@ void TweakSettingsChanged() {
 		NULL,
 		CFNotificationSuspensionBehaviorDeliverImmediately
 	);
-	if ( ![[NSProcessInfo processInfo] isOperatingSystemAtLeastVersion:(NSOperatingSystemVersion){14, 1, 0}] ) {
-		useNative = NO;
-	}
+	
 	if ( enableTweak ) {
 		if ( useNative ) {
 			%init(native);
