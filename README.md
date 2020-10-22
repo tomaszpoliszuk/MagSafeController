@@ -1,12 +1,14 @@
 # MagSafe Controller
 
 ## Compatibility
-iOS 13 and above
+iOS 12 and above
 
 ## What this tweak do:
-- Enables new native "MagSafe" charging view when connecting device to power source on iOS 14.1 and above
-- Adds custom recreation of that view on iOS 13 and above (you can also use this one on iOS 14.1)
-- allows customize size and color of selected elements (some options are currently disabled in native mode)
+* Adds custom recreation of "MagSafe" Charging View charging view when connecting device to power source
+* Enables new native "MagSafe" charging view when connecting device to power source on iOS 14.1 and above (on iOS 14.1 you can choose native or cutom animation)
+* allows to customize size and color of selected elements (some options are currently disabled in native mode)
+
+**Make sure that you don't have tweaks that disable charging view**
 
 **Configure options from Settings.**
 

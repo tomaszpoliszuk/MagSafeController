@@ -1,10 +1,10 @@
 Package: com.tomaszpoliszuk.magsafecontroller
-Depends: firmware (>= 13), mobilesubstrate, preferenceloader
+Depends: firmware (>= 12), mobilesubstrate, preferenceloader
 Replaces: com.tomaszpoliszuk.lockscreenbatterymagsafe
 Provides: com.tomaszpoliszuk.lockscreenbatterymagsafe
 Conflicts: com.tomaszpoliszuk.lockscreenbatterymagsafe
 Name: MagSafe Controller
-Version: 1.0
+Version: 1.0.1
 Architecture: iphoneos-arm
 Author: Tomasz Poliszuk
 Section: Tweaks
