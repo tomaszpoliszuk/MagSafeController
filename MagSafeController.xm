@@ -334,6 +334,7 @@ void TweakSettingsChanged() {
 		[labelElement setFont:[UIFont systemFontOfSize:labelFontSize weight:normal]];
 		[self.view addSubview:labelElement];
 		labelElement.layer.zPosition = 1;
+		labelElement.textColor = [UIColor whiteColor];
 		labelElement.text = [NSString stringWithFormat:@"%.f%% Charged", floor([[UIDevice currentDevice] batteryLevel] * 100)];
 	}
 
