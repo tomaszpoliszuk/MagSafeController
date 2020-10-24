@@ -165,7 +165,7 @@ void TweakSettingsChanged() {
 
 	UIColor *elementsColor = [UIColor systemGreenColor];
 
-	bool lowPowerMode = [[NSProcessInfo processInfo] isLowPowerModeEnabled];
+	const bool lowPowerMode = [[NSProcessInfo processInfo] isLowPowerModeEnabled];
 
 	if ( selectedColor == 1 ) {
 		elementsColor = [UIColor systemYellowColor];
@@ -347,16 +347,6 @@ void TweakSettingsChanged() {
 	visualEffectView = [[UIVisualEffectView alloc] initWithEffect:blurEffect];
 	visualEffectView.frame = self.view.bounds;
 	[self.view addSubview:visualEffectView];
-}
-%end
-
-%hook _CSSingleBatteryChargingView
--(void)_layoutBattery {
-	%orig;
-	MSHookIvar<UIView *>(self, "_batteryContainerView").hidden = YES;
-	MSHookIvar<UIView *>(self, "_batteryBlurView").hidden = YES;
-	MSHookIvar<UIView *>(self, "_batteryFillView").hidden = YES;
-	MSHookIvar<UILabel *>(self, "_chargePercentLabel").hidden = YES;
 }
 %end
 
@@ -375,7 +365,7 @@ void TweakSettingsChanged() {
 
 	UIColor *elementsColor = [UIColor systemGreenColor];
 
-	bool lowPowerMode = [[NSProcessInfo processInfo] isLowPowerModeEnabled];
+	const bool lowPowerMode = [[NSProcessInfo processInfo] isLowPowerModeEnabled];
 
 	if ( selectedColor == 1 ) {
 		elementsColor = [UIColor systemYellowColor];
@@ -559,8 +549,9 @@ void TweakSettingsChanged() {
 	[self.view addSubview:visualEffectView];
 }
 %end
+%end
 
-%hook _SBLockScreenSingleBatteryChargingView
+%hook _SingleBatteryChargingView
 -(void)_layoutBattery {
 	%orig;
 	MSHookIvar<UIView *>(self, "_batteryContainerView").hidden = YES;
@@ -570,7 +561,6 @@ void TweakSettingsChanged() {
 }
 %end
 
-%end
 
 %ctor {
 	TweakSettingsChanged();
@@ -583,14 +573,18 @@ void TweakSettingsChanged() {
 		CFNotificationSuspensionBehaviorDeliverImmediately
 	);
 	if ( enableTweak ) {
-		if (@available(iOS 13, *)) {
-			if ( useNative ) {
-				%init(native);
-			} else {
-				%init(simulated);
-			}
+		if ( useNative ) {
+			%init(native);
 		} else {
-			%init(simulated_old);
+			Class _singleBatteryChargingViewClass;
+			if (@available(iOS 13, *)) {
+				%init(simulated);
+				_singleBatteryChargingViewClass = %c(_CSSingleBatteryChargingView);
+			} else {
+				%init(simulated_old);
+				_singleBatteryChargingViewClass = %c(_SBLockScreenSingleBatteryChargingView);
+			}
+			%init(_SingleBatteryChargingView=_singleBatteryChargingViewClass);
 		}
 	}
 }
