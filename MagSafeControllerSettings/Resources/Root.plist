@@ -14,7 +14,7 @@
 		{
 			cell = PSGroupCell;
 			label = "Select Mode:";
-			key = selectMode;
+			key = useNativeGroup;
 		},
 		{
 			cell = PSSegmentCell;
@@ -34,12 +34,12 @@
 		},
 		{
 			cell = PSGroupCell;
-			label = "Select size:";
+			label = "Control elements:";
 		},
 		{
 			cell = PSEditTextCell;
 			key = boltScale;
-			label = "Scale of Bolt Image";
+			label = "Scale of Bolt";
 			default = 100;
 			defaults = com.tomaszpoliszuk.magsafecontroller;
 			PostNotification = "com.tomaszpoliszuk.magsafecontroller.settingschanged";
@@ -63,7 +63,7 @@
 		{
 			cell = PSEditTextCell;
 			key = lineWidth;
-			label = "Line thickness";
+			label = "Ring Line thickness";
 			default = 24;
 			defaults = com.tomaszpoliszuk.magsafecontroller;
 			PostNotification = "com.tomaszpoliszuk.magsafecontroller.settingschanged";
@@ -73,12 +73,16 @@
 			placeholder = "24";
 		},
 		{
-			cell = PSSwitchCell;
-			key = useSplashEffect;
-			label = "Splash Effect";
-			default = 1;
+			cell = PSEditTextCell;
+			key = labelFontSize;
+			label = "Label Font Size";
+			default = 24;
 			defaults = com.tomaszpoliszuk.magsafecontroller;
 			PostNotification = "com.tomaszpoliszuk.magsafecontroller.settingschanged";
+			noAutoCorrect = 0;
+			keyboard = numbers;
+			isNumeric = 1;
+			placeholder = "24";
 		},
 		{
 			cell = PSSwitchCell;
@@ -89,25 +93,20 @@
 			PostNotification = "com.tomaszpoliszuk.magsafecontroller.settingschanged";
 		},
 		{
-			cell = PSEditTextCell;
-			key = labelFontSize;
-			label = "Font Size of Text Label";
-			default = 24;
+			cell = PSSwitchCell;
+			key = useSplashEffect;
+			label = "Splash Effect";
+			default = 1;
 			defaults = com.tomaszpoliszuk.magsafecontroller;
 			PostNotification = "com.tomaszpoliszuk.magsafecontroller.settingschanged";
-			noAutoCorrect = 0;
-			keyboard = numbers;
-			isNumeric = 1;
-			placeholder = "24";
 		},
 		{
 			cell = PSGroupCell;
 			label = "Select Colors:";
-			footerText = "Ability to select colors works currently only in custom mode";
 		},
 		{
 			cell = PSStaticTextCell;
-			label = Color;
+			label = Default;
 		},
 		{
 			cell = PSSegmentCell;
@@ -129,7 +128,7 @@
 		},
 		{
 			cell = PSStaticTextCell;
-			label = "Color in Low Power Mode";
+			label = "in Low Power Mode";
 		},
 		{
 			cell = PSSegmentCell;
@@ -151,7 +150,7 @@
 		},
 		{
 			cell = PSStaticTextCell;
-			label = "Color of blur in background";
+			label = "Blur in background";
 		},
 		{
 			cell = PSSegmentCell;

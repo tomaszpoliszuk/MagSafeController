@@ -24,24 +24,43 @@
 -(UIImage *)_flatImageWithColor:(UIColor *)color;
 @end
 
+@interface _UIBackdropView : UIView
+@end
+
+@interface SBUILegibilityLabel : UIView
+@property (nonatomic, copy) NSString *string;
+- (void)setFont:(id)arg1;
+@end
+
+@interface CSBatteryFillView : UIView
+@end
+
+@interface CSRingLayer : CAShapeLayer
+@end
+
 @interface CSCoverSheetViewControllerBase : UIViewController
 @end
 @interface CSChargingViewController : CSCoverSheetViewControllerBase
 @end
 
-@interface SBUILegibilityLabel
-	@property (getter=isHidden, nonatomic) bool hidden;
+@interface SBFTouchPassThroughView : UIView
+@end
+@interface CSCoverSheetViewBase : SBFTouchPassThroughView
+@end
+@interface CSBatteryChargingView : CSCoverSheetViewBase
 @end
 
-@interface CSAccessory : NSObject
-@property (nonatomic, retain) UIColor *primaryColor;
-@property (nonatomic, retain) UIColor *secondaryColor;
-@property (nonatomic) double alignmentPercent;
+@interface CSBatteryChargingRingView : CSBatteryChargingView
 @end
 
 @interface SBDashBoardViewControllerBase : UIViewController
 @end
 @interface SBDashBoardChargingViewController : SBDashBoardViewControllerBase
+@end
+
+@interface SBDashBoardViewBase : SBFTouchPassThroughView
+@end
+@interface SBLockScreenBatteryChargingView : SBDashBoardViewBase
 @end
 
 NSString *const domainString = @"com.tomaszpoliszuk.magsafecontroller";
@@ -170,7 +189,48 @@ void TweakSettingsChanged() {
 	}
 	return origValue;
 }
+%end
 
+%hook CSBatteryChargingRingView
+- (id)colorForBatteryLevel:(double)arg1 {
+	id origValue = %orig;
+	if ( enableTweak ) {
+		UIColor *elementsColor = [UIColor systemGreenColor];
+		bool lowPowerMode = [[NSProcessInfo processInfo] isLowPowerModeEnabled];
+		if ( selectedColor == 1 ) {
+			elementsColor = [UIColor systemYellowColor];
+		} else if ( selectedColor == 2 ) {
+			elementsColor = [UIColor systemRedColor];
+		}
+		if ( lowPowerMode ) {
+			if ( selectedLowPowerModeColor == 1 ) {
+				elementsColor = [UIColor systemYellowColor];
+			} else if ( selectedLowPowerModeColor == 2 ) {
+				elementsColor = [UIColor systemRedColor];
+			}
+		}
+		return elementsColor;
+	}
+	return origValue;
+}
+- (void)_layoutChargePercentLabel {
+	if ( enableTweak ) {
+		SBUILegibilityLabel *_chargePercentLabel = [self valueForKey:@"_chargePercentLabel"];
+		[_chargePercentLabel setFont:[UIFont systemFontOfSize:labelFontSize weight:UIFontWeightRegular]];
+	}
+	%orig;
+}
+- (void)_chargingBoltPresentAnimationWithDuration {
+	%orig;
+	if ( enableTweak && !useChargingRingBackground ) {
+		CSRingLayer *_trackFillRingLayer = [self valueForKey:@"_trackFillRingLayer"];
+		_trackFillRingLayer.hidden = YES;
+		CSRingLayer * _ringBlurLayer = [self valueForKey:@"_ringBlurLayer"];
+		_ringBlurLayer.hidden = YES;
+		CALayer * _ringTempOverlayLayer = [self valueForKey:@"_ringTempOverlayLayer"];
+		_ringTempOverlayLayer.hidden = YES;
+	}
+}
 %end
 
 %end
@@ -261,8 +321,6 @@ void TweakSettingsChanged() {
 		boltView.layer.opacity = 0;
 	}
 
-
-
 	if ( useChargingRingBackground && ringScale > 0 ) {
 		CAShapeLayer *chargingRingBackground	= [CAShapeLayer layer];
 		chargingRingBackground.path				= [UIBezierPath bezierPathWithArcCenter:CGPointMake((ringScaledWidth/2), (ringScaledWidth/2)) radius:(ringScaledWidth/2) startAngle:(-M_PI/2) endAngle:(M_PI * 2 - M_PI_2) clockwise:YES].CGPath;
@@ -273,9 +331,9 @@ void TweakSettingsChanged() {
 		chargingRingBackground.lineCap			= kCALineCapRound;
 		chargingRingBackground.lineJoin			= kCALineJoinRound;
 
-		CAKeyframeAnimation *chargingRingStartBackgroundOutAnimation						= [CAKeyframeAnimation animation];
-		chargingRingStartBackgroundOutAnimation.keyPath 									= @"strokeStart";
-		chargingRingStartBackgroundOutAnimation.values										= @[ @0, @0, @0, @0, @1 ];
+		CAKeyframeAnimation *chargingRingStartBackgroundOutAnimation					= [CAKeyframeAnimation animation];
+		chargingRingStartBackgroundOutAnimation.keyPath 								= @"strokeStart";
+		chargingRingStartBackgroundOutAnimation.values									= @[ @0, @0, @0, @0, @1 ];
 		chargingRingStartBackgroundOutAnimation.timingFunctions							= @[ timingFunction, timingFunction, timingFunction, timingFunction ];
 
 		CAKeyframeAnimation *chargingRingEndBackgroundOutAnimation						= [CAKeyframeAnimation animation];
@@ -283,10 +341,10 @@ void TweakSettingsChanged() {
 		chargingRingEndBackgroundOutAnimation.values									= @[ @1, @1, @1, @1, @1 ];
 		chargingRingEndBackgroundOutAnimation.timingFunctions							= @[ timingFunction, timingFunction, timingFunction, timingFunction ];
 
-		CAKeyframeAnimation *chargingRingProgressBackgroundLineWidthAnimation		= [CAKeyframeAnimation animation];
-		chargingRingProgressBackgroundLineWidthAnimation.keyPath					= @"lineWidth";
-		chargingRingProgressBackgroundLineWidthAnimation.values						= @[ @0, [NSNumber numberWithFloat:lineWidth], [NSNumber numberWithFloat:lineWidth], [NSNumber numberWithFloat:lineWidth], [NSNumber numberWithFloat:lineWidth/2] ];
-		chargingRingProgressBackgroundLineWidthAnimation.timingFunctions			= @[ timingFunction, timingFunction, timingFunction, timingFunction ];
+		CAKeyframeAnimation *chargingRingProgressBackgroundLineWidthAnimation			= [CAKeyframeAnimation animation];
+		chargingRingProgressBackgroundLineWidthAnimation.keyPath						= @"lineWidth";
+		chargingRingProgressBackgroundLineWidthAnimation.values							= @[ @0, [NSNumber numberWithFloat:lineWidth], [NSNumber numberWithFloat:lineWidth], [NSNumber numberWithFloat:lineWidth], [NSNumber numberWithFloat:lineWidth/2] ];
+		chargingRingProgressBackgroundLineWidthAnimation.timingFunctions				= @[ timingFunction, timingFunction, timingFunction, timingFunction ];
 
 		CAAnimationGroup *chargingRingBackgroundGroup = [[CAAnimationGroup alloc] init];
 		chargingRingBackgroundGroup.animations = @[ chargingRingStartBackgroundOutAnimation, chargingRingEndBackgroundOutAnimation, chargingRingProgressBackgroundLineWidthAnimation ];
@@ -297,13 +355,10 @@ void TweakSettingsChanged() {
 		chargingRingBackground.zPosition = 1;
 
 		[chargingRingBackground addAnimation:chargingRingBackgroundGroup forKey:@"chargingRingBackground"];
-
 		chargingRingBackground.strokeStart = 1;
 		chargingRingBackground.strokeEnd = 1;
 		chargingRingBackground.lineWidth = lineWidth/2;
 	}
-
-
 
 	if ( ringScale > 0 ) {
 		CAShapeLayer *chargingRingProgress		= [CAShapeLayer layer];
@@ -353,7 +408,23 @@ void TweakSettingsChanged() {
 		[self.view addSubview:labelElement];
 		labelElement.layer.zPosition = 1;
 		labelElement.textColor = [UIColor whiteColor];
-		labelElement.text = [NSString stringWithFormat:@"%.f%% Charged", floor([[UIDevice currentDevice] batteryLevel] * 100)];
+		CSBatteryChargingView *_chargingView = [self valueForKey:@"_chargingView"];
+		if ( [_chargingView isKindOfClass:%c(_CSSingleBatteryChargingView)] ) {
+			SBUILegibilityLabel *_chargePercentLabel = [_chargingView valueForKey:@"_chargePercentLabel"];
+			labelElement.text = _chargePercentLabel.string;
+		} else if ( [_chargingView isKindOfClass:%c(_CSDoubleBatteryChargingView)] ) {
+			SBUILegibilityLabel *_internalChargePercentLabel = [_chargingView valueForKey:@"_internalChargePercentLabel"];
+			SBUILegibilityLabel *_externalChargePercentLabel = [_chargingView valueForKey:@"_externalChargePercentLabel"];
+			labelElement.text = _internalChargePercentLabel.string;
+
+			UILabel *labelElementExternal = [[UILabel alloc] initWithFrame:CGRectMake( CGRectGetMidX(self.view.frame)-ringScaledWidth/2, CGRectGetMidY(self.view.frame)+ringScaledWidth/2+lineWidth+labelFontSize*1.5, ringScaledWidth , labelFontSize*1.5 )];
+			[labelElementExternal setCentersHorizontally:YES];
+			[labelElementExternal setFont:[UIFont systemFontOfSize:labelFontSize weight:normal]];
+			[self.view addSubview:labelElementExternal];
+			labelElementExternal.layer.zPosition = 1;
+			labelElementExternal.textColor = [UIColor whiteColor];
+			labelElementExternal.text = _externalChargePercentLabel.string;
+		}
 	}
 
 	UIVisualEffect *blurEffect;
@@ -461,8 +532,6 @@ void TweakSettingsChanged() {
 		boltView.layer.opacity = 0;
 	}
 
-
-
 	if ( useChargingRingBackground && ringScale > 0 ) {
 		CAShapeLayer *chargingRingBackground	= [CAShapeLayer layer];
 		chargingRingBackground.path				= [UIBezierPath bezierPathWithArcCenter:CGPointMake((ringScaledWidth/2), (ringScaledWidth/2)) radius:(ringScaledWidth/2) startAngle:(-M_PI/2) endAngle:(M_PI * 2 - M_PI_2) clockwise:YES].CGPath;
@@ -473,9 +542,9 @@ void TweakSettingsChanged() {
 		chargingRingBackground.lineCap			= kCALineCapRound;
 		chargingRingBackground.lineJoin			= kCALineJoinRound;
 
-		CAKeyframeAnimation *chargingRingStartBackgroundOutAnimation						= [CAKeyframeAnimation animation];
-		chargingRingStartBackgroundOutAnimation.keyPath 									= @"strokeStart";
-		chargingRingStartBackgroundOutAnimation.values										= @[ @0, @0, @0, @0, @1 ];
+		CAKeyframeAnimation *chargingRingStartBackgroundOutAnimation					= [CAKeyframeAnimation animation];
+		chargingRingStartBackgroundOutAnimation.keyPath 								= @"strokeStart";
+		chargingRingStartBackgroundOutAnimation.values									= @[ @0, @0, @0, @0, @1 ];
 		chargingRingStartBackgroundOutAnimation.timingFunctions							= @[ timingFunction, timingFunction, timingFunction, timingFunction ];
 
 		CAKeyframeAnimation *chargingRingEndBackgroundOutAnimation						= [CAKeyframeAnimation animation];
@@ -483,10 +552,10 @@ void TweakSettingsChanged() {
 		chargingRingEndBackgroundOutAnimation.values									= @[ @1, @1, @1, @1, @1 ];
 		chargingRingEndBackgroundOutAnimation.timingFunctions							= @[ timingFunction, timingFunction, timingFunction, timingFunction ];
 
-		CAKeyframeAnimation *chargingRingProgressBackgroundLineWidthAnimation		= [CAKeyframeAnimation animation];
-		chargingRingProgressBackgroundLineWidthAnimation.keyPath					= @"lineWidth";
-		chargingRingProgressBackgroundLineWidthAnimation.values						= @[ @0, [NSNumber numberWithFloat:lineWidth], [NSNumber numberWithFloat:lineWidth], [NSNumber numberWithFloat:lineWidth], [NSNumber numberWithFloat:lineWidth/2] ];
-		chargingRingProgressBackgroundLineWidthAnimation.timingFunctions			= @[ timingFunction, timingFunction, timingFunction, timingFunction ];
+		CAKeyframeAnimation *chargingRingProgressBackgroundLineWidthAnimation			= [CAKeyframeAnimation animation];
+		chargingRingProgressBackgroundLineWidthAnimation.keyPath						= @"lineWidth";
+		chargingRingProgressBackgroundLineWidthAnimation.values							= @[ @0, [NSNumber numberWithFloat:lineWidth], [NSNumber numberWithFloat:lineWidth], [NSNumber numberWithFloat:lineWidth], [NSNumber numberWithFloat:lineWidth/2] ];
+		chargingRingProgressBackgroundLineWidthAnimation.timingFunctions				= @[ timingFunction, timingFunction, timingFunction, timingFunction ];
 
 		CAAnimationGroup *chargingRingBackgroundGroup = [[CAAnimationGroup alloc] init];
 		chargingRingBackgroundGroup.animations = @[ chargingRingStartBackgroundOutAnimation, chargingRingEndBackgroundOutAnimation, chargingRingProgressBackgroundLineWidthAnimation ];
@@ -497,13 +566,10 @@ void TweakSettingsChanged() {
 		chargingRingBackground.zPosition = 1;
 
 		[chargingRingBackground addAnimation:chargingRingBackgroundGroup forKey:@"chargingRingBackground"];
-
 		chargingRingBackground.strokeStart = 1;
 		chargingRingBackground.strokeEnd = 1;
 		chargingRingBackground.lineWidth = lineWidth/2;
 	}
-
-
 
 	if ( ringScale > 0 ) {
 		CAShapeLayer *chargingRingProgress		= [CAShapeLayer layer];
@@ -553,7 +619,23 @@ void TweakSettingsChanged() {
 		[self.view addSubview:labelElement];
 		labelElement.layer.zPosition = 1;
 		labelElement.textColor = [UIColor whiteColor];
-		labelElement.text = [NSString stringWithFormat:@"%.f%% Charged", floor([[UIDevice currentDevice] batteryLevel] * 100)];
+		SBLockScreenBatteryChargingView *_chargingView = [self valueForKey:@"_chargingView"];
+		if ( [_chargingView isKindOfClass:%c(_SBLockScreenSingleBatteryChargingView)] ) {
+			SBUILegibilityLabel *_chargePercentLabel = [_chargingView valueForKey:@"_chargePercentLabel"];
+			labelElement.text = _chargePercentLabel.string;
+		} else if ( [_chargingView isKindOfClass:%c(_SBLockScreenDoubleBatteryChargingView)] ) {
+			SBUILegibilityLabel *_internalChargePercentLabel = [_chargingView valueForKey:@"_internalChargePercentLabel"];
+			SBUILegibilityLabel *_externalChargePercentLabel = [_chargingView valueForKey:@"_externalChargePercentLabel"];
+			labelElement.text = _internalChargePercentLabel.string;
+
+			UILabel *labelElementExternal = [[UILabel alloc] initWithFrame:CGRectMake( CGRectGetMidX(self.view.frame)-ringScaledWidth/2, CGRectGetMidY(self.view.frame)+ringScaledWidth/2+lineWidth+labelFontSize*1.5, ringScaledWidth , labelFontSize*1.5 )];
+			[labelElementExternal setCentersHorizontally:YES];
+			[labelElementExternal setFont:[UIFont systemFontOfSize:labelFontSize weight:normal]];
+			[self.view addSubview:labelElementExternal];
+			labelElementExternal.layer.zPosition = 1;
+			labelElementExternal.textColor = [UIColor whiteColor];
+			labelElementExternal.text = _externalChargePercentLabel.string;
+		}
 	}
 
 	UIVisualEffect *blurEffect;
@@ -567,18 +649,40 @@ void TweakSettingsChanged() {
 	[self.view addSubview:visualEffectView];
 }
 %end
+
 %end
 
 %hook _SingleBatteryChargingView
--(void)_layoutBattery {
+- (void)_layoutBattery {
 	%orig;
-	MSHookIvar<UIView *>(self, "_batteryContainerView").hidden = YES;
-	MSHookIvar<UIView *>(self, "_batteryBlurView").hidden = YES;
-	MSHookIvar<UIView *>(self, "_batteryFillView").hidden = YES;
 	MSHookIvar<UILabel *>(self, "_chargePercentLabel").hidden = YES;
+	MSHookIvar<UIView *>(self, "_batteryBlurView").hidden = YES;
+	MSHookIvar<UIView *>(self, "_batteryContainerView").hidden = YES;
+	MSHookIvar<UIView *>(self, "_batteryFillView").hidden = YES;
+	if (@available(iOS 14, *)) {
+		MSHookIvar<UIView *>(self, "_boltImageView").hidden = YES;
+	}
 }
 %end
 
+%hook _DoubleBatteryChargingView
+- (void)layoutSubviews {
+	%orig;
+	MSHookIvar<_UIBackdropView *>(self, "_externalBatteryBlurView").hidden = YES;
+	MSHookIvar<_UIBackdropView *>(self, "_internalBatteryBlurView").hidden = YES;
+	MSHookIvar<CSBatteryFillView *>(self, "_externalBatteryFillView").hidden = YES;
+	MSHookIvar<CSBatteryFillView *>(self, "_internalBatteryFillView").hidden = YES;
+	MSHookIvar<SBUILegibilityLabel *>(self, "_externalChargePercentLabel").hidden = YES;
+	MSHookIvar<SBUILegibilityLabel *>(self, "_externalChargingNameLabel").hidden = YES;
+	MSHookIvar<SBUILegibilityLabel *>(self, "_internalChargePercentLabel").hidden = YES;
+	MSHookIvar<SBUILegibilityLabel *>(self, "_internalChargingNameLabel").hidden = YES;
+	MSHookIvar<UIImageView *>(self, "_externalChargingIndicator").hidden = YES;
+	MSHookIvar<UIImageView *>(self, "_internalChargingIndicator").hidden = YES;
+	MSHookIvar<UIView *>(self, "_batteryContainerView").hidden = YES;
+	MSHookIvar<UIView *>(self, "_externalBatteryContainerView").hidden = YES;
+	MSHookIvar<UIView *>(self, "_internalBatteryContainerView").hidden = YES;
+}
+%end
 
 %ctor {
 	TweakSettingsChanged();
@@ -595,14 +699,17 @@ void TweakSettingsChanged() {
 			%init(native);
 		} else {
 			Class _singleBatteryChargingViewClass;
+			Class _doubleBatteryChargingViewClass;
 			if (@available(iOS 13, *)) {
 				%init(simulated);
 				_singleBatteryChargingViewClass = %c(_CSSingleBatteryChargingView);
+				_doubleBatteryChargingViewClass = %c(_CSDoubleBatteryChargingView);
 			} else {
 				%init(simulated_old);
 				_singleBatteryChargingViewClass = %c(_SBLockScreenSingleBatteryChargingView);
+				_doubleBatteryChargingViewClass = %c(_SBLockScreenDoubleBatteryChargingView);
 			}
-			%init(_SingleBatteryChargingView=_singleBatteryChargingViewClass);
+			%init(_SingleBatteryChargingView=_singleBatteryChargingViewClass, _DoubleBatteryChargingView=_doubleBatteryChargingViewClass);
 		}
 	}
 }

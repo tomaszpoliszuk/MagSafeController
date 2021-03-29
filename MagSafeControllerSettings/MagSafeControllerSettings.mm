@@ -28,6 +28,8 @@
 
 NSString *const domainString = @"com.tomaszpoliszuk.magsafecontroller";
 
+static bool iOS14_1AndUp = [[NSProcessInfo processInfo] isOperatingSystemAtLeastVersion:(NSOperatingSystemVersion){14, 1, 0}];
+
 @interface BSAction : NSObject
 @end
 @interface SBSRelaunchAction : BSAction
@@ -50,30 +52,12 @@ NSString *const domainString = @"com.tomaszpoliszuk.magsafecontroller";
 - (NSArray *)specifiers {
 	if (!_specifiers) {
 		_specifiers = [self loadSpecifiersFromPlistName:@"Root" target:self];
-		if (@available(iOS 14.1, *)) {
+		if (!iOS14_1AndUp) {
 			removeSpecifiers = [[NSMutableArray alloc]init];
 			for(PSSpecifier* specifier in _specifiers) {
 				NSString* key = [specifier propertyForKey:@"key"];
 				if(
-					[key hasPrefix:@"labelFontSiz"]
-				) {
-					[removeSpecifiers addObject:specifier];
-				}
-
-			}
-			[_specifiers removeObjectsInArray:removeSpecifiers];
-		} else {
-			removeSpecifiers = [[NSMutableArray alloc]init];
-			for(PSSpecifier* specifier in _specifiers) {
-				NSString* key = [specifier propertyForKey:@"key"];
-				if(
-					[key hasPrefix:@"forceMag"]
-					||
-					[key hasPrefix:@"useNativ"]
-					||
-					[key hasPrefix:@"mainSetting"]
-					||
-					[key hasPrefix:@"selectMod"]
+					[key hasPrefix:@"useNative"]
 				) {
 					[removeSpecifiers addObject:specifier];
 				}
@@ -81,7 +65,6 @@ NSString *const domainString = @"com.tomaszpoliszuk.magsafecontroller";
 			}
 			[_specifiers removeObjectsInArray:removeSpecifiers];
 		}
-
 	}
 	return _specifiers;
 }
@@ -100,7 +83,7 @@ NSString *const domainString = @"com.tomaszpoliszuk.magsafecontroller";
 -(void)respringDevice {
 	UIAlertController *confirmRespringAlert = [UIAlertController alertControllerWithTitle:@"Respring Device" message:@"Do you want to respring device?" preferredStyle:UIAlertControllerStyleAlert];
 	UIAlertAction *confirm = [UIAlertAction actionWithTitle:@"Confirm" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-		SBSRelaunchAction *respringAction = [NSClassFromString(@"SBSRelaunchAction") actionWithReason:@"RestartRenderServer" options:4 targetURL:[NSURL URLWithString:@"prefs:root=MagSafe%20Controller"]];
+		SBSRelaunchAction *respringAction = [NSClassFromString(@"SBSRelaunchAction") actionWithReason:@"RestartRenderServer" options:4 targetURL:[NSURL URLWithString:[@"prefs:root=MagSafe Controller" stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLQueryAllowedCharacterSet]]]];
 		FBSSystemService *frontBoardService = [NSClassFromString(@"FBSSystemService") sharedService];
 		NSSet *actions = [NSSet setWithObject:respringAction];
 		[frontBoardService sendActions:actions withResult:nil];
@@ -136,7 +119,8 @@ NSString *const domainString = @"com.tomaszpoliszuk.magsafecontroller";
 }
 -(void)TomaszPoliszukAtBigBoss {
 	UIApplication *application = [UIApplication sharedApplication];
-	NSString *tweakName = @"MagSafe+Controller";
+	NSString *tweakName = @"MagSafe Controller";
+	tweakName = [tweakName stringByReplacingOccurrencesOfString:@" " withString:@"+"];
 	NSURL *twitterWebsite = [NSURL URLWithString:[@"http://apt.thebigboss.org/developer-packages.php?name=" stringByAppendingString:tweakName]];
 	[application openURL:twitterWebsite options:@{} completionHandler:nil];
 }
