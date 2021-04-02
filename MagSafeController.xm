@@ -659,7 +659,7 @@ void TweakSettingsChanged() {
 	MSHookIvar<UIView *>(self, "_batteryBlurView").hidden = YES;
 	MSHookIvar<UIView *>(self, "_batteryContainerView").hidden = YES;
 	MSHookIvar<UIView *>(self, "_batteryFillView").hidden = YES;
-	if (@available(iOS 14, *)) {
+	if (@available(iOS 14.2, *)) {
 		MSHookIvar<UIView *>(self, "_boltImageView").hidden = YES;
 	}
 }
