@@ -28,7 +28,9 @@
 
 NSString *const domainString = @"com.tomaszpoliszuk.magsafecontroller";
 
-static bool iOS14_1AndUp = [[NSProcessInfo processInfo] isOperatingSystemAtLeastVersion:(NSOperatingSystemVersion){14, 1, 0}];
+#define kIsiOS14_1AndUp [[NSProcessInfo processInfo] isOperatingSystemAtLeastVersion:(NSOperatingSystemVersion){14, 1, 0}]
+#define kIsiOS14AndUp [[NSProcessInfo processInfo] isOperatingSystemAtLeastVersion:(NSOperatingSystemVersion){14, 0, 0}]
+#define kIsiOS13AndUp [[NSProcessInfo processInfo] isOperatingSystemAtLeastVersion:(NSOperatingSystemVersion){13, 0, 0}]
 
 @interface BSAction : NSObject
 @end
@@ -43,27 +45,34 @@ static bool iOS14_1AndUp = [[NSProcessInfo processInfo] isOperatingSystemAtLeast
 
 @interface PSListController (MagSafeController)
 @end
-@interface MagSafeControllerSettings : PSListController {
-	NSMutableArray *removeSpecifiers;
-}
+@interface MagSafeControllerSettings : PSListController
 @end
 
 @implementation MagSafeControllerSettings
 - (NSArray *)specifiers {
 	if (!_specifiers) {
 		_specifiers = [self loadSpecifiersFromPlistName:@"Root" target:self];
-		if (!iOS14_1AndUp) {
-			removeSpecifiers = [[NSMutableArray alloc]init];
+		if (!kIsiOS14_1AndUp) {
 			for(PSSpecifier* specifier in _specifiers) {
 				NSString* key = [specifier propertyForKey:@"key"];
-				if(
-					[key hasPrefix:@"useNative"]
-				) {
-					[removeSpecifiers addObject:specifier];
+				if( [key isEqual:@"magsafeCharger"] ) {
+					[self removeSpecifier:specifier];
 				}
-
+				if( [key hasPrefix:@"useNative"] ) {
+					[self removeSpecifier:specifier];
+				}
+				if (!kIsiOS14AndUp) {
+					if( [key isEqual:@"useWithPowerSource"] ) {
+						[self removeSpecifier:specifier];
+					}
+					if( [key isEqual:@"wiredCharger"] ) {
+						[self removeSpecifier:specifier];
+					}
+					if( [key isEqual:@"wirelessCharger"] ) {
+						[self removeSpecifier:specifier];
+					}
+				}
 			}
-			[_specifiers removeObjectsInArray:removeSpecifiers];
 		}
 	}
 	return _specifiers;

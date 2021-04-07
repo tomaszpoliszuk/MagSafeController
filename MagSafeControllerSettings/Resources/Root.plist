@@ -34,6 +34,35 @@
 		},
 		{
 			cell = PSGroupCell;
+			label = "Use with Power Source:";
+			key = useWithPowerSource;
+		},
+		{
+			cell = PSSwitchCell;
+			key = wiredCharger;
+			label = "Wired Charger";
+			default = 1;
+			defaults = com.tomaszpoliszuk.magsafecontroller;
+			PostNotification = "com.tomaszpoliszuk.magsafecontroller.settingschanged";
+		},
+		{
+			cell = PSSwitchCell;
+			key = wirelessCharger;
+			label = "Wireless Charger";
+			default = 1;
+			defaults = com.tomaszpoliszuk.magsafecontroller;
+			PostNotification = "com.tomaszpoliszuk.magsafecontroller.settingschanged";
+		},
+		{
+			cell = PSSwitchCell;
+			key = magsafeCharger;
+			label = "Magsafe Charger";
+			default = 1;
+			defaults = com.tomaszpoliszuk.magsafecontroller;
+			PostNotification = "com.tomaszpoliszuk.magsafecontroller.settingschanged";
+		},
+		{
+			cell = PSGroupCell;
 			label = "Control elements:";
 		},
 		{
