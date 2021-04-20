@@ -1,11 +1,18 @@
 Package: com.tomaszpoliszuk.magsafecontroller
-Depends: firmware (>= 12), mobilesubstrate, preferenceloader
+Depends: firmware (>= 12.0), mobilesubstrate, preferenceloader
 Replaces: com.tomaszpoliszuk.lockscreenbatterymagsafe
 Provides: com.tomaszpoliszuk.lockscreenbatterymagsafe
 Conflicts: com.tomaszpoliszuk.lockscreenbatterymagsafe
 Name: MagSafe Controller
-Version: 1.1
+Version: 1.1.1
 Architecture: iphoneos-arm
+Description: Customizable native "MagSafe" charging view
+Homepage: http://moreinfo.thebigboss.org/moreinfo/depiction.php?file=magsafecontrollerDp
+Depiction: http://moreinfo.thebigboss.org/moreinfo/depiction.php?file=magsafecontrollerDp
+Maintainer: BigBoss <bigboss@thebigboss.org>
 Author: Tomasz Poliszuk
+Sponsor: thebigboss.org <http://thebigboss.org>
 Section: Tweaks
 dev: tomaszpoliszuk
+Tag: purpose::extension
+Icon: file:///Library/PreferenceBundles/MagSafeControllerSettings.bundle/icons/MagSafeController@3x.png

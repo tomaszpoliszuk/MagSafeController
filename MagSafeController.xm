@@ -357,10 +357,10 @@ static void simulateMagSafeChargingView( UIViewController *mainController ) {
 			return wiredCharger;
 		}
 	} else if ( kIsiOS14AndUp ) {
-		if ( kIsConnectedToWirelessInternalChargingAccessory ) {
-			return magsafeCharger;
-		} else if ( kIsConnectedToQiPower ) {
+		if ( kIsConnectedToQiPower ) {
 			return wirelessCharger;
+		} else if ( kIsConnectedToExternalChargingSource ) {
+			return wiredCharger;
 		}
 	}
 	return origValue;
@@ -375,10 +375,10 @@ static void simulateMagSafeChargingView( UIViewController *mainController ) {
 			arg1 = wiredCharger;
 		}
 	} else if ( kIsiOS14AndUp ) {
-		if ( kIsConnectedToWirelessInternalChargingAccessory ) {
-			arg1 = magsafeCharger;
-		} else if ( kIsConnectedToQiPower ) {
+		if ( kIsConnectedToQiPower ) {
 			arg1 = wirelessCharger;
+		} else if ( kIsConnectedToExternalChargingSource ) {
+			arg1 = wiredCharger;
 		}
 	}
 	%orig;
@@ -506,10 +506,10 @@ static void simulateMagSafeChargingView( UIViewController *mainController ) {
 			enableMagSafeChargingView = wiredCharger;
 		}
 	} else if ( kIsiOS14AndUp ) {
-		if ( kIsConnectedToWirelessInternalChargingAccessory ) {
-			enableMagSafeChargingView = magsafeCharger;
-		} else if ( kIsConnectedToQiPower ) {
+		if ( kIsConnectedToQiPower ) {
 			enableMagSafeChargingView = wirelessCharger;
+		} else if ( kIsConnectedToExternalChargingSource ) {
+			enableMagSafeChargingView = wiredCharger;
 		}
 	} else if ( !kIsiOS14AndUp ) {
 		enableMagSafeChargingView = YES;
@@ -536,10 +536,10 @@ static void simulateMagSafeChargingView( UIViewController *mainController ) {
 			enableMagSafeChargingView = wiredCharger;
 		}
 	} else if ( kIsiOS14AndUp ) {
-		if ( kIsConnectedToWirelessInternalChargingAccessory ) {
-			enableMagSafeChargingView = magsafeCharger;
-		} else if ( kIsConnectedToQiPower ) {
+		if ( kIsConnectedToQiPower ) {
 			enableMagSafeChargingView = wirelessCharger;
+		} else if ( kIsConnectedToExternalChargingSource ) {
+			enableMagSafeChargingView = wiredCharger;
 		}
 	} else if ( !kIsiOS14AndUp ) {
 		enableMagSafeChargingView = YES;
@@ -564,10 +564,10 @@ static void simulateMagSafeChargingView( UIViewController *mainController ) {
 			enableMagSafeChargingView = wiredCharger;
 		}
 	} else if ( kIsiOS14AndUp ) {
-		if ( kIsConnectedToWirelessInternalChargingAccessory ) {
-			enableMagSafeChargingView = magsafeCharger;
-		} else if ( kIsConnectedToQiPower ) {
+		if ( kIsConnectedToQiPower ) {
 			enableMagSafeChargingView = wirelessCharger;
+		} else if ( kIsConnectedToExternalChargingSource ) {
+			enableMagSafeChargingView = wiredCharger;
 		}
 	} else if ( !kIsiOS14AndUp ) {
 		enableMagSafeChargingView = YES;
@@ -596,10 +596,10 @@ static void simulateMagSafeChargingView( UIViewController *mainController ) {
 			enableMagSafeChargingView = wiredCharger;
 		}
 	} else if ( kIsiOS14AndUp ) {
-		if ( kIsConnectedToWirelessInternalChargingAccessory ) {
-			enableMagSafeChargingView = magsafeCharger;
-		} else if ( kIsConnectedToQiPower ) {
+		if ( kIsConnectedToQiPower ) {
 			enableMagSafeChargingView = wirelessCharger;
+		} else if ( kIsConnectedToExternalChargingSource ) {
+			enableMagSafeChargingView = wiredCharger;
 		}
 	} else if ( !kIsiOS14AndUp ) {
 		enableMagSafeChargingView = YES;
