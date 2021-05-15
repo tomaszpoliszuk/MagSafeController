@@ -4,7 +4,7 @@ Replaces: com.tomaszpoliszuk.lockscreenbatterymagsafe
 Provides: com.tomaszpoliszuk.lockscreenbatterymagsafe
 Conflicts: com.tomaszpoliszuk.lockscreenbatterymagsafe
 Name: MagSafe Controller
-Version: 1.1.2
+Version: 1.1.3
 Architecture: iphoneos-arm
 Description: Customizable native "MagSafe" charging view
 Homepage: http://moreinfo.thebigboss.org/moreinfo/depiction.php?file=magsafecontrollerDp

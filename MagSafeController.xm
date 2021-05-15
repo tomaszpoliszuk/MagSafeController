@@ -46,6 +46,7 @@
 @end
 
 @interface CSBatteryChargingRingView : CSBatteryChargingView
+@property (nonatomic, retain) CALayer *chargingBoltGlyph;
 @end
 
 @interface SBDashBoardViewControllerBase : UIViewController
@@ -113,7 +114,7 @@ static double boltSizeHeight = 124;
 static double animationDuration = 2.75;
 
 static bool enableMagSafeChargingView = YES;
-//	TODO - simplify this check (currently it's repeating 4 times in code)
+//	TODO - simplify this check (currently it's repeating too many times in code)
 
 CAMediaTimingFunction *timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
 
@@ -139,6 +140,9 @@ void TweakSettingsChanged() {
 
 	boltScale = [([tweakSettings valueForKey:@"boltScale"] ?: @(100)) integerValue];
 	ringScale = [([tweakSettings valueForKey:@"ringScale"] ?: @(100)) integerValue];
+
+	boltScaledWidth = boltSizeWidth * boltScale / 100;
+	boltScaledHeight = boltSizeHeight * boltScale / 100;
 
 	useSplashEffect = [([tweakSettings objectForKey:@"useSplashEffect"] ?: @(YES)) boolValue];
 	useChargingRingBackground = [([tweakSettings objectForKey:@"useChargingRingBackground"] ?: @(YES)) boolValue];
@@ -168,9 +172,6 @@ static void simulateMagSafeChargingView( UIViewController *mainController ) {
 	}
 
 	ringScaledWidth = 3 * ringScale;
-
-	boltScaledWidth = boltSizeWidth * boltScale / 100;
-	boltScaledHeight = boltSizeHeight * boltScale / 100;
 
 	NSNumber *currentBatteryLevel = [NSNumber numberWithFloat:[UIDevice currentDevice].batteryLevel];
 
@@ -387,137 +388,119 @@ static void simulateMagSafeChargingView( UIViewController *mainController ) {
 
 - (CGSize)boltSize {
 	CGSize origValue = %orig;
-	if ( enableTweak ) {
-		boltScaledWidth = boltSizeWidth * boltScale / 100;
-		boltScaledHeight = boltSizeHeight * boltScale / 100;
-
-		if ( boltScaledWidth > 0 ) {
-			origValue.width = boltScaledWidth;
-		}
-		if ( boltScaledHeight > 0 ) {
-			origValue.height = boltScaledHeight;
-		}
+	if ( boltScaledWidth > 0 ) {
+		origValue.width = boltScaledWidth;
+	}
+	if ( boltScaledHeight > 0 ) {
+		origValue.height = boltScaledHeight;
 	}
 	return origValue;
 }
 - (double)ringDiameter {
 	double origValue = %orig;
-	if ( enableTweak ) {
-		ringScaledWidth = 3 * ringScale;
-		if ( ringScaledWidth > 0 ) {
-			return ringScaledWidth;
-		}
+	ringScaledWidth = 3 * ringScale;
+	if ( ringScaledWidth > 0 ) {
+		return ringScaledWidth;
 	}
 	return origValue;
 }
 - (double)splashRingDiameter {
 	double origValue = %orig;
-	if ( enableTweak ) {
-		if ( !useSplashEffect ) {
-			return 0;
-		}
-		ringScaledWidth = 3 * ringScale;
-		if ( ringScaledWidth > 0 ) {
-			return ringScaledWidth*2.25;
-		}
+	if ( !useSplashEffect ) {
+		return 0;
+	}
+	ringScaledWidth = 3 * ringScale;
+	if ( ringScaledWidth > 0 ) {
+		return ringScaledWidth*2.25;
 	}
 	return origValue;
 }
 - (double)lineWidth {
-	double origValue = %orig;
-	if ( enableTweak ) {
-		return lineWidth;
-	}
-	return origValue;
+	return lineWidth;
 }
 %end
 
 %hook CSMagSafeRingConfiguration
 - (double)ringDiameter {
 	double origValue = %orig;
-	if ( enableTweak ) {
-		ringScaledWidth = 3 * ringScale;
-		if ( ringScaledWidth > 0 ) {
-			return ringScaledWidth;
-		}
+	ringScaledWidth = 3 * ringScale;
+	if ( ringScaledWidth > 0 ) {
+		return ringScaledWidth;
 	}
 	return origValue;
 }
 - (double)splashRingDiameter {
 	double origValue = %orig;
-	if ( enableTweak ) {
-		if ( !useSplashEffect ) {
-			return 0;
-		}
-		ringScaledWidth = 3 * ringScale;
-		if ( ringScaledWidth > 0 ) {
-			return ringScaledWidth*2.25;
-		}
+	if ( !useSplashEffect ) {
+		return 0;
+	}
+	ringScaledWidth = 3 * ringScale;
+	if ( ringScaledWidth > 0 ) {
+		return ringScaledWidth*2.25;
 	}
 	return origValue;
 }
 - (double)lineWidth {
-	double origValue = %orig;
-	if ( enableTweak ) {
-		return lineWidth;
-	}
-	return origValue;
+	return lineWidth;
 }
 %end
 
 %hook CSBatteryChargingRingView
+- (CALayer *)chargingBoltGlyph {
+	CALayer *origValue = %orig;
+	CGRect newBoltFrame = origValue.frame;
+	if ( boltScaledWidth > 0 ) {
+		newBoltFrame.size.width = boltScaledWidth;
+	}
+	if ( boltScaledHeight > 0 ) {
+		newBoltFrame.size.height = boltScaledHeight;
+	}
+	origValue.frame = newBoltFrame;
+	return origValue;
+}
 - (id)colorForBatteryLevel:(double)arg1 {
-	id origValue = %orig;
-	if ( enableTweak ) {
-		UIColor *elementsColor = [UIColor systemGreenColor];
-		bool lowPowerMode = [[NSProcessInfo processInfo] isLowPowerModeEnabled];
-		if ( selectedColor == 1 ) {
+	UIColor *elementsColor = [UIColor systemGreenColor];
+	bool lowPowerMode = [[NSProcessInfo processInfo] isLowPowerModeEnabled];
+	if ( selectedColor == 1 ) {
+		elementsColor = [UIColor systemYellowColor];
+	} else if ( selectedColor == 2 ) {
+		elementsColor = [UIColor systemRedColor];
+	}
+	if ( lowPowerMode ) {
+		if ( selectedLowPowerModeColor == 1 ) {
 			elementsColor = [UIColor systemYellowColor];
-		} else if ( selectedColor == 2 ) {
+		} else if ( selectedLowPowerModeColor == 2 ) {
 			elementsColor = [UIColor systemRedColor];
 		}
-		if ( lowPowerMode ) {
-			if ( selectedLowPowerModeColor == 1 ) {
-				elementsColor = [UIColor systemYellowColor];
-			} else if ( selectedLowPowerModeColor == 2 ) {
-				elementsColor = [UIColor systemRedColor];
-			}
-		}
-		return elementsColor;
 	}
-	return origValue;
+	return elementsColor;
 }
 - (id)_colorForBattery:(id)arg1 {
-	id origValue = %orig;
-	if ( enableTweak ) {
-		UIColor *elementsColor = [UIColor systemGreenColor];
-		bool lowPowerMode = [[NSProcessInfo processInfo] isLowPowerModeEnabled];
-		if ( selectedColor == 1 ) {
+	UIColor *elementsColor = [UIColor systemGreenColor];
+	bool lowPowerMode = [[NSProcessInfo processInfo] isLowPowerModeEnabled];
+	if ( selectedColor == 1 ) {
+		elementsColor = [UIColor systemYellowColor];
+	} else if ( selectedColor == 2 ) {
+		elementsColor = [UIColor systemRedColor];
+	}
+	if ( lowPowerMode ) {
+		if ( selectedLowPowerModeColor == 1 ) {
 			elementsColor = [UIColor systemYellowColor];
-		} else if ( selectedColor == 2 ) {
+		} else if ( selectedLowPowerModeColor == 2 ) {
 			elementsColor = [UIColor systemRedColor];
 		}
-		if ( lowPowerMode ) {
-			if ( selectedLowPowerModeColor == 1 ) {
-				elementsColor = [UIColor systemYellowColor];
-			} else if ( selectedLowPowerModeColor == 2 ) {
-				elementsColor = [UIColor systemRedColor];
-			}
-		}
-		return elementsColor;
 	}
-	return origValue;
+	return elementsColor;
 }
 - (void)_layoutChargePercentLabel {
-	if ( enableTweak ) {
-		SBUILegibilityLabel *_chargePercentLabel = [self valueForKey:@"_chargePercentLabel"];
-		[_chargePercentLabel setFont:[UIFont systemFontOfSize:labelFontSize weight:UIFontWeightRegular]];
-	}
+	[self chargingBoltGlyph];
+	SBUILegibilityLabel *_chargePercentLabel = [self valueForKey:@"_chargePercentLabel"];
+	[_chargePercentLabel setFont:[UIFont systemFontOfSize:labelFontSize weight:UIFontWeightRegular]];
 	%orig;
 }
 - (void)_chargingBoltPresentAnimationWithDuration {
 	%orig;
-	if ( enableTweak && !useChargingRingBackground ) {
+	if ( !useChargingRingBackground ) {
 		CSRingLayer *_trackFillRingLayer = [self valueForKey:@"_trackFillRingLayer"];
 		_trackFillRingLayer.hidden = YES;
 		CSRingLayer *_ringBlurLayer = [self valueForKey:@"_ringBlurLayer"];
@@ -528,7 +511,7 @@ static void simulateMagSafeChargingView( UIViewController *mainController ) {
 }
 - (void)_performChargingBoltPresentAnimation {
 	%orig;
-	if ( enableTweak && !useChargingRingBackground ) {
+	if ( !useChargingRingBackground ) {
 		CSRingLayer *_trackFillRingLayer = [self valueForKey:@"_trackFillRingLayer"];
 		_trackFillRingLayer.hidden = YES;
 		CSRingLayer *_ringBlurLayer = [self valueForKey:@"_ringBlurLayer"];
